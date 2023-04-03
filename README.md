@@ -44,6 +44,11 @@ It will create some files
 - `google-services.json` in the `android/app` directory
 - 'firebase_option.dart' in the `lib` directory
 
+Need to gitignore
+- google-services.json
+- GoogleService-Info.plist
+- firebase_app_id_file.json
+
 ## Change icons and app name
 [https://medium.com/@vaibhavi.rana99/change-application-name-and-icon-in-flutter-bebbec297c57](https://medium.com/@vaibhavi.rana99/change-application-name-and-icon-in-flutter-bebbec297c57)
 
