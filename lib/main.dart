@@ -12,6 +12,9 @@ import 'package:korea_post_interests/utils/snack_bar_utils.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+const isTestMode = false;
+var testPostId = 1;
+
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   final messageData = message.data;
@@ -131,7 +134,11 @@ class _MyHomePageState extends State<MyHomePage> {
   void _incrementCounter() {
     final messageProvider = Provider.of<MessageProvider>(context, listen: false);
     final newMessage = Message(
-        keyword: '자전거', title: '자전거 좀 사 줘요 ', postId: 1000, link: "https://google.com/", date: "2023.04.01 (토)");
+        keyword: '자전거',
+        title: '자전거 좀 사 줘요 제목이 길어지면 어떻게 되나요? 더 길어야 할것 아닌가요? 한줄 더 나오는구나?',
+        postId: testPostId++,
+        link: "https://google.com/",
+        date: "2023.04.01 (토)");
 
     print("newMessage: $newMessage");
 
@@ -163,20 +170,29 @@ class _MyHomePageState extends State<MyHomePage> {
                   itemCount: messageProvider.messages.length,
                   itemBuilder: (context, index) {
                     final message = messageProvider.messages[index];
-                    return ListTile(
-                      title: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(message.keyword),
-                          Text(message.date, style: const TextStyle(fontSize: 12)),
-                        ],
+                    return Container(
+                      color: Colors.grey.withOpacity(message.isClicked ? 0.3 : 0),
+                      child: ListTile(
+                        title: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(message.keyword),
+                            Text(message.date, style: const TextStyle(fontSize: 12)),
+                          ],
+                        ),
+                        subtitle: Text(message.title),
+                        trailing: InkWell(
+                          onTap: () {
+                            Clipboard.setData(ClipboardData(text: message.link));
+                            // SnackBarUtils.showSnackBar(context, '링크가 복사 되었습니다.');
+                          },
+                          child: const CircleAvatar(backgroundColor: Colors.blue, child: Icon(Icons.share)),
+                        ),
+                        onTap: () {
+                          _launchUrl(Uri.parse(message.link));
+                          messageProvider.clickMessage(message);
+                        },
                       ),
-                      subtitle: Text(message.title),
-                      // trailing: const Icon(Icons.arrow_forward_ios),
-                      onTap: () {
-                        _launchUrl(Uri.parse(message.link));
-                        messageProvider.removeMessage(message);
-                      },
                     );
                   },
                 ),
@@ -185,16 +201,17 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _clearAllMessages,
-        tooltip: 'Clear All',
-        child: const Icon(Icons.refresh),
-      ),
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: _incrementCounter,
-      //   tooltip: 'Increment',
-      //   child: const Icon(Icons.add),
-      // ),
+      floatingActionButton: isTestMode
+          ? FloatingActionButton(
+              onPressed: _incrementCounter,
+              tooltip: 'Add',
+              child: const Icon(Icons.add),
+            )
+          : FloatingActionButton(
+              onPressed: _clearAllMessages,
+              tooltip: 'Clear All',
+              child: const Icon(Icons.refresh),
+            ),
     );
   }
 

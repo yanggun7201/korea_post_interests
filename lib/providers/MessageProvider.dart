@@ -18,4 +18,17 @@ class MessageProvider extends ChangeNotifier {
     messages.clear();
     notifyListeners();
   }
+
+  void clickMessage(Message message) {
+    var newMessages = messages.map((e) {
+      if (e.postId == message.postId) {
+        return message.copyWith(isClicked: true);
+      }
+      return e;
+    }).toList();
+
+    messages.clear();
+    messages.addAll(newMessages);
+    notifyListeners();
+  }
 }
