@@ -216,7 +216,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Future<void> _launchUrl(Uri url) async {
-    if (!await launchUrl(url)) {
+    if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
       print('Could not launch $url');
       SnackBarUtils.showSnackBar(context, 'Could not launch $url');
     }
